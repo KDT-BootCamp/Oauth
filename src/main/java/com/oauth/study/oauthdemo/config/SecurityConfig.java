@@ -7,10 +7,21 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.oauth.study.oauthdemo.config.handler.FailureHandler;
+import com.oauth.study.oauthdemo.config.handler.SuccessHandler;
+import com.oauth.study.oauthdemo.service.UserService;
+
+import lombok.RequiredArgsConstructor;
+
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
     
+    private final SuccessHandler successHandler;
+    private final FailureHandler failureHandler;
+    private final UserService userService;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         System.out.println("debug >>> SecurityConfig");
@@ -20,9 +31,12 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                   .requestMatchers("/login/form","/WEB-INF/**").permitAll()
-                    .anyRequest().authenticated())
-//                .oauth2Login(oauth -> oauth
-//                    .loginPage("/login"))
+                  .anyRequest().permitAll())
+                  .oauth2Login(oauth -> oauth
+                              .loginPage("/login")
+                              .successHandler(successHandler)
+                              .failureHandler(failureHandler)
+                              .userInfoEndpoint(user -> user.userService(userService)))
                 .build();
     }
 }

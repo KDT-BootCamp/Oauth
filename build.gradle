@@ -25,9 +25,8 @@ repositories {
 
 dependencies {
 
-	//Spring Security	
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-
+	// oauth2
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
 	// 스프링부트 3.0 에서 JSP 사용하고자 할 때만 추가 
 
